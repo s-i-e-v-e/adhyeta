@@ -1,0 +1,31 @@
+२६. अतिथिः (Guests)
+
+पानीयं किं ददामि ?
+What would you like to have for a drink ?
+
+तर्हि पानकं आनयामि ।
+O.K . I will bring juice.
+
+भवान् काफीं पिबति उत चायम् ?
+Do you prefer coffee or tea ?
+
+किञ्चित् विश्रान्तिं अनुभवतु ।
+Have some rest, please.
+
+अद्यैव गन्तव्यं वा ?
+Do you have to leave right now ?
+
+भोजनान्तरं गच्छतु ।
+Go after lunch.
+
+दिनद्वयं तिष्ठतु भोः ।
+Stay for two days.
+
+रात्रौ निद्रा सम्यक् आसीत् ।
+I had sound sleep last night.
+
+रात्रौ निद्रा एव नास्ति भोः ।
+I did not have even a wink of sleep last night.
+
+बहिः गतवान्, इदानीं आगच्छति ।
+He has gone out, will be back in a few minutes.

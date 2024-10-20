@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>अध्येता</title>
+    <link rel="stylesheet" href="/a/main.css">
+    <script src="/a/htmx.min.js"></script>
+  </head>
+  <body>
+  <header>
+    <h1>अध्येता</h1>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a>
+        <li><a href="/e/word/1">Words</a>
+      </ul>
+    </nav>
+  </header>
+  <main hx-target="this">
+    {{content}}
+  </main>
+  </body>
+    <script>
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+      const te = evt.detail.triggeringEvent;
+      const se = evt.detail.triggeringEvent.srcElement;
+      let xt = '';
+      if (evt.detail.triggeringEvent.type === "click" && se.localName === 'x-w') {
+        if (evt.detail.triggeringEvent.altKey) {
+          xt = 'a+c'
+        }
+        else {
+          xt = 'c'
+        }
+      }
+      if (xt) {
+        evt.detail.parameters['xt'] = xt;
+      }
+
+    evt.detail.parameters['w'] = se.attributes['x-w-id'].value;
+});
+    </script>
+</html>

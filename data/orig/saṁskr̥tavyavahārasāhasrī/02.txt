@@ -1,0 +1,223 @@
+२. मिलनम् (Meeting)
+
+भवतः नाम किं ?
+What is your name? (masc.)
+
+भवत्याः नाम किम् ?
+What is your name? (fem.)
+
+मम नाम  fill ।
+My name is fill
+
+एषः मम मित्रं  fill ।
+This is my friend fill
+
+एतेषां विषये श्रुतवान्
+I have heard of them
+
+एषा मम सखी  fill ।
+This is my friend fill (fem.).
+
+भवान् किं (उद्योगं) करोति ?
+What do you do? (masc.)
+
+भवती किं (उद्योगं) करोति? 
+What do you do? (fem.)
+
+अहं अध्यापकः अस्मि । 
+I am a teacher (masc.)
+
+अहम् अध्यापिका अस्मि  ।
+I am a teacher.(fem.)
+
+अधिकारी
+Officer
+
+उट्टङ्ककः
+Typist
+
+तंत्रज्ञः
+Engineer
+
+प्राध्यापकः
+Professor
+
+लिपिकः
+Clerk
+
+न्यायवादी
+lawyer
+
+विक्रयिकः
+Salesman
+
+उपन्यासकः
+Lecturer
+
+अहं यन्त्राकारे कार्यं करोमि ।
+I work in a factory.
+
+कार्यालये
+in an office;
+
+महाविद्यालये
+in a college
+
+वित्तकोषे
+in a bank;
+
+चिकित्सालये
+in a hospital
+
+प्रौढशालायां
+in a high school;
+
+यन्त्राकारे
+in a factory
+
+भवान्/भवती कस्यां कक्ष्यायां पठति ?
+Which class are you in?
+
+अहं नवमकक्ष्यायां पठामि ।
+I am in Std.IX.
+
+अहं  ... कक्ष्यायां पठामि ।
+I am in I/II/III/B.Sc . class.
+
+भवतः ग्रामः ?
+Where are you from?
+
+मम ग्रामः  fill ।
+I am from fill
+
+कुशलं वा ?
+How are you ?
+
+कथमस्ति भवान् ?
+How are you ?
+
+गृहे सर्वे कुशलिनः वा ?
+Are all well at home?
+
+सर्वं कुशलम् ।
+All is well.
+
+कः विशेषः ? ( का वार्ता ?)
+What news?
+
+भवता एव वक्तव्यम् ।
+You have to say.
+
+कोऽपि विशेषः ?
+Anything special?
+
+भवान् (भवती) कुतः आगच्छति ?
+Where are you coming from?
+
+अहं शालातः, गृहतः, ॥॥तः 
+I am coming from school/house/....
+
+भवान्/भवती कुत्र गच्छति ?
+Where are you going?
+
+भवति वा इति पश्यामः ।
+Let us see if it can be done.
+
+ज्ञातं वा ?
+Understand ?
+
+कथं आसीत् ?
+How was it?
+
+अङ्गीकृतं किल ?
+Agreed?
+
+कति अपेक्षितानि ?
+How many do you want?
+
+अद्य एव वा ?
+Is it today?
+
+इदानीं एव वा ?
+Is it going to be now?
+
+आगन्तव्यं भोः ।
+Please do come.
+
+तदर्थं वा ?
+Is it for that ?
+
+तत् किमपि मास्तु ।
+Don't want that.
+
+न दृश्यते ?
+Can't you see?
+
+समाप्तं वा ?
+Is it over?
+
+कस्मिन् समये ?
+At what time?
+
+तथापि
+even then
+
+आवश्यकं न आसीत् ।
+It was not necessary.
+
+तिष्ठतु भोः ।
+Be here for some more time.
+
+स्मरति किल ?
+Remember, don't you?
+
+तथा किमपि नास्ति ।
+No, it is not so.
+
+कथं अस्ति भवान् ? 
+How are you?
+
+न विस्मरतु ।
+Don't forget.
+
+अन्यच्च
+besides
+
+तदनन्तरम्
+then
+
+तावदेव किल ?
+Is it only so much?
+
+महान् सन्तोषः ।
+Very happy about it.
+
+तत् तथा न ?
+Is it not so?
+
+तस्य कः अर्थः ?
+What does it mean?
+
+आं भोः ।
+Yes, Dear, Sir.
+
+एवमेव
+just
+
+अहं देवालयं/कार्यालयं/विपणिं गच्छामि
+I am going to temple/office/market.
+
+किं चिराद् दर्शनं ?
+What is the matter ? You are not seen these days.
+
+भवन्तं कुत्रापि दृष्टवान् ।
+I remember to have seen you somewhere.
+
+भवान् सम्भाषणशिबिरं आगतवान् वा ?
+Have you come to the conversation camp ? Note:In the place of  yushhmad shabdaH (tvam), here bhavat shabdaH (bhavAn/bhavatI) is used for the convenience of Samskrita conversation learning. (The verb used for  bhavAn/bhavatI is III Person Singular instead of II Person singular).
+
+तर्हि कुत्र दृष्टवान् ?
+In that case where have I seen you?
+
+तर्हि तत्रैव दृष्टवान् ।
+I must have seen you  there in that case.
