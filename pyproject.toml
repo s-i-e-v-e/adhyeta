@@ -8,5 +8,6 @@ dependencies = [
     "uvicorn",
     "starlette",
     "apsw",
-    "python-multipart"
+    "python-multipart",
+    "indic_transliteration"
 ]

@@ -1,5 +1,5 @@
 from mod.repo.works import part_load, word_get, works_list_all, parts_list_all, word_status_toggle, word_note_set, \
-    work_load
+    work_load, get_word_stats
 
 
 def work_list_page_render():
@@ -16,15 +16,18 @@ def work_list_page_render():
 
 def work_parts_list_page_render(work_id: int):
     ys = parts_list_all(work_id)
+    zs = get_word_stats(work_id)
     if len(ys) > 1:
         [_, work_name] = work_load(work_id)
         html = ""
         html += """<div hx-push-url="true">"""
         html += f"<h3>{work_name}</h3>"
         html += """<ul>"""
-        for [part_id, name] in ys:
+        for [xx, yy] in zip(ys, zs):
+            (part_id, name) = xx
+            (a, b) = yy
             url = f"/e/work/{work_id}/part/{part_id}"
-            html += f"""<li><a hx-target="main" hx-get="{url}" href="{url}">{name}</a></li>"""
+            html += f"""<li><a hx-target="main" hx-get="{url}" href="{url}">{name}</a>[{a}/{b}]</li>"""
         html += """</ul>"""
         html += """</div>"""
         return html
@@ -69,6 +72,7 @@ def __uid(line_no: int, word_no: int):
 
 def __word_render(url: str, word_id: int, w: str, note: str, is_known: bool, ignore: bool, uid: str):
     html = ""
+
     if ignore:
         html += w
     else:

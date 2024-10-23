@@ -51,12 +51,20 @@ div.content {
         order: 0
     }
 
+    & x-v {
+        display: inline;
+        color: #6065;
+        font-size: 50%;
+        padding-bottom: 1vh;
+        order: 1
+    }
+
     & x-n {
         display: inline;
         color: #d69604;
         font-size: 50%;
         padding-bottom: 1vh;
-        order: 1
+        order: 2;
     }
 
     & div.container {
