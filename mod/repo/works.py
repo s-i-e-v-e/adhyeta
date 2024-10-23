@@ -59,7 +59,7 @@ def work_load(work_id: int):
 
 def parts_list_all(work_id: int):
     db = Database()
-    return list(db.exec("SELECT id, name FROM part WHERE work_id = ?", work_id))
+    return list(db.exec("SELECT id, name FROM part WHERE work_id = ? ORDER BY id", work_id))
 
 def part_load(part_id: int):
     db = Database()
@@ -80,3 +80,12 @@ def word_get(id: int):
 def word_filter(id: int, n: int):
     db = Database()
     return db.exec("SELECT id, word, is_known, note from word where ignore = 0 order by word LIMIT ? offset ?", n, id)
+
+def get_word_stats(work_id: int):
+    db = Database()
+    xs = db.exec("SELECT COUNT(DISTINCT word_id) FROM part_word pw INNER JOIN word w ON w.id = pw.word_id WHERE part_id IN (SELECT id FROM part WHERE work_id = ?) AND ignore = 0 AND is_known = 1 GROUP BY part_id ORDER BY part_id", work_id)
+    ys = db.exec("SELECT COUNT(DISTINCT word_id) FROM part_word pw INNER JOIN word w ON w.id = pw.word_id WHERE part_id IN (SELECT id FROM part WHERE work_id = ?) AND ignore = 0 GROUP BY part_id ORDER BY part_id", work_id)
+    zs = []
+    for xx, yy in zip(xs, ys):
+        zs.append([xx[0], yy[0]])
+    return zs
