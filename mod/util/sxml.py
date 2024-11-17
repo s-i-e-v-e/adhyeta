@@ -49,11 +49,13 @@ def _is_ws(x: str) -> bool:
     return _has([' ', '\r', '\n', '\t'], x)
 
 def _parse_ws(ps: ParserState):
+    xs = ''
     while not ps_eos(ps):
         x = ps_peek(ps)
         if not _is_ws(x):
             break
-        ps_next(ps)
+        xs += ps_next(ps)
+    return xs
 
 def _parse_unit(ps: ParserState, break_on: list):
     xs = ''
@@ -83,14 +85,14 @@ def _parse_attrs(ps: ParserState):
             break
 
         ps_next(ps)
-        k = _parse_unit(ps, [])
+        k = _parse_unit(ps, ['(', ')'])
         _parse_ws(ps)
 
         # check for empty attr
         x = ps_peek(ps)
         v = ''
         if x != '@':
-            v = _parse_unit(ps, [])
+            v = _parse_unit(ps, ['(', ')'])
             _parse_ws(ps)
         else:
             pass
@@ -104,7 +106,7 @@ def _parse_list(ps: ParserState):
     y = List('', [], [])
 
     start = ps.i
-    y.id = ps_next(ps)
+    y.id = _parse_unit(ps, ['(', ')'])
     _parse_ws(ps)
 
     x = ps_peek(ps)
@@ -113,7 +115,7 @@ def _parse_list(ps: ParserState):
 
     x = ''
     while not ps_eos(ps):
-        _parse_ws(ps)
+        y.xs.append(_parse_ws(ps))
         x = ps_peek(ps)
         if x == '"':
             y.xs.append(_parse_str(ps))
@@ -123,24 +125,27 @@ def _parse_list(ps: ParserState):
             x = ps_next(ps)
             break
         else:
-            y.xs.append(_parse_unit(ps, [')']))
+            y.xs.append(_parse_unit(ps, ['(', ')']))
 
     if x != ')':
         raise ps_error(ps, f"incomplete list: {y.id}", start)
     return y
 
 def _parse(ps: ParserState):
-    xs = []
-    while not ps_eos(ps):
-        _parse_ws(ps)
-        x = ps_peek(ps)
-        if x == '(':
-           xs.append(_parse_list(ps))
-        elif x == '':
-            break
-        else:
-           raise ps_error(ps, f"invalid token: `{x}`", 0)
-    return xs
+    _parse_ws(ps)
+
+    if ps_eos(ps):
+        return None
+
+    x = ps_peek(ps)
+    if x != '(':
+        raise ps_error(ps, f"invalid token: `{x}`", 0)
+    y = _parse_list(ps)
+    _parse_ws(ps)
+
+    if not ps_eos(ps):
+        raise ps_error(ps, f"stream not yet consumed", 0)
+    return y
 
 def sxml_parse(xx: str):
     xx = xx.replace("\r\n", "\n").replace("\r", "\n")

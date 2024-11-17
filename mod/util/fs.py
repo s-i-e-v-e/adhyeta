@@ -18,3 +18,7 @@ def read_text(path: str):
 
 def read_json(path: str):
     return json.loads(read_text(path))
+
+def write_text(path: str, data: str):
+    with open(path, 'w') as f:
+        return f.write(data)

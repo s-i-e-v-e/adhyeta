@@ -9,5 +9,5 @@ dependencies = [
     "starlette",
     "apsw",
     "python-multipart",
-    "indic_transliteration"
+    "indic-transliteration"
 ]
