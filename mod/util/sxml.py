@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from shutil import Error
 
 @dataclass
 class ParserState:
@@ -10,100 +10,144 @@ class ParserState:
 @dataclass
 class Token:
     type: str
-    lexeme: str
+    xs: str|list
+
+@dataclass
+class List:
+    id: str
+    attrs: list[tuple]
+    xs: list
+
+def ps_error(ps: ParserState, m: str, idx: int):
+    idx = idx if idx else ps.i
+    line = 1 + ps.xx.count('\n', 0, idx)
+    a = ps.xx.rfind('\n', 0, idx)
+    b = ps.xx.find('\n', idx)
+    char = idx - a
+    x = ps.xx[idx:b]
+    return Error(f"{m}: {x} (L{line}C{char})")
+
+def ps_eos(ps: ParserState):
+    return ps.i >= ps.max
 
 def ps_peek(ps: ParserState):
+    if ps_eos(ps):
+        return ''
     return ps.xx[ps.i]
 
 def ps_next(ps: ParserState):
+    if ps_eos(ps):
+        return ''
     x = ps.xx[ps.i]
     ps.i += 1
     return x
 
-def _is_num(x: str) -> bool:
-    return any([x in y for y in "0123456789"])
+def _has(xs: list, x: str) -> bool:
+    return True if not len(xs) else any([x in y for y in xs])
 
 def _is_ws(x: str) -> bool:
-    return any([x in y for y in [' ', '\r', '\n', '\t']])
+    return _has([' ', '\r', '\n', '\t'], x)
 
 def _parse_ws(ps: ParserState):
-    while True:
+    while not ps_eos(ps):
         x = ps_peek(ps)
         if not _is_ws(x):
             break
         ps_next(ps)
 
-def _parse_unit(ps: ParserState, type: str):
+def _parse_unit(ps: ParserState, break_on: list):
     xs = ''
-    while ps.i < ps.max:
+    while not ps_eos(ps):
         x = ps_peek(ps)
-        if _is_ws(x):
-            ps_next(ps)
+        if _is_ws(x) or _has(break_on, x):
             break
-        ps_next(ps)
-        xs += x
-    return Token(type, xs)
+        xs += ps_next(ps)
+    return xs
 
 def _parse_str(ps: ParserState):
     ps_next(ps)
 
     xs = ''
-    while True:
+    while not ps_eos(ps):
         x = ps_next(ps)
         if x == '"':
             break
         xs += x
-    return Token('str', xs)
+    return xs
 
-def _parse_kv(ps: ParserState):
-    ps_next(ps)
+def _parse_attrs(ps: ParserState):
+    xs = []
+    while not ps_eos(ps):
+        x = ps_peek(ps)
+        if x != '@':
+            break
 
-    k = _parse_unit(ps, 'attr')
-    _parse_ws(ps)
-    v = _parse_unit(ps, 'val')
-    return k, v
+        ps_next(ps)
+        k = _parse_unit(ps, [])
+        _parse_ws(ps)
 
-def _parse_item(ps: ParserState):
-    x = ps_peek(ps)
-    if x == '@':
-        return _parse_kv(ps)
-    elif x == '"':
-        return _parse_str(ps)
-    else:
-        return _parse_unit(ps, 'str')
+        # check for empty attr
+        x = ps_peek(ps)
+        v = ''
+        if x != '@':
+            v = _parse_unit(ps, [])
+            _parse_ws(ps)
+        else:
+            pass
+        xs.append((k, v))
+
+    return xs
 
 def _parse_list(ps: ParserState):
     ps_next(ps)
 
-    xs = []
-    xs.append(Token('(', ''))
+    y = List('', [], [])
 
-    id = ps_next(ps)
-    xs.append(Token('id', id))
+    start = ps.i
+    y.id = ps_next(ps)
     _parse_ws(ps)
 
-    while ps.i < ps.max:
+    x = ps_peek(ps)
+    if x == '@':
+        y.attrs = _parse_attrs(ps)
+
+    x = ''
+    while not ps_eos(ps):
+        _parse_ws(ps)
         x = ps_peek(ps)
-        if x == ")":
-            ps_next(ps)
-            xs.append(Token(')', ''))
+        if x == '"':
+            y.xs.append(_parse_str(ps))
+        elif x == '(':
+            y.xs.append(_parse_list(ps))
+        elif x == ")":
+            x = ps_next(ps)
             break
-        xs.append(_parse_item(ps))
-    return xs
+        else:
+            y.xs.append(_parse_unit(ps, [')']))
+
+    if x != ')':
+        raise ps_error(ps, f"incomplete list: {y.id}", start)
+    return y
 
 def _parse(ps: ParserState):
     xs = []
-    while ps.i < ps.max:
+    while not ps_eos(ps):
         _parse_ws(ps)
         x = ps_peek(ps)
         if x == '(':
-           xs.extend(_parse_list(ps))
+           xs.append(_parse_list(ps))
+        elif x == '':
+            break
+        else:
+           raise ps_error(ps, f"invalid token: `{x}`", 0)
     return xs
 
 def sxml_parse(xx: str):
+    xx = xx.replace("\r\n", "\n").replace("\r", "\n")
     ps = ParserState(0, len(xx), xx)
-    print(_parse(ps))
+    return _parse(ps)
 
 
 if __name__ == '__main__':
-    sxml_parse('(p @id 45 this is a sentence.')
+    z = sxml_parse('(p @id 45 this is a sentence.)')
+    print(z)
