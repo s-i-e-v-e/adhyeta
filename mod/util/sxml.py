@@ -153,6 +153,17 @@ def sxml_parse(xx: str):
     return _parse(ps)
 
 
+def sxml_ast_dump(x: List, indent: int):
+    prefix = "-" * indent if indent else ""
+    print(f"{prefix}LIST_{x.id}")
+    for k,v in x.attrs:
+        print(f"{prefix}@{k}:{v}")
+    for v in x.xs:
+        if type(v) is str:
+            print(f"{prefix}{v}")
+        else:
+            sxml_ast_dump(v, indent + 1)
+
 if __name__ == '__main__':
     z = sxml_parse('(p @id 45 this is a sentence.)')
     print(z)
