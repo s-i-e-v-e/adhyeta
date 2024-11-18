@@ -1,5 +1,8 @@
 from dataclasses import dataclass
+from posixpath import ismount
 from shutil import Error
+from typing import Any, Callable
+import typing
 
 @dataclass
 class ParserState:
@@ -13,9 +16,10 @@ class Token:
     xs: str|list
 
 @dataclass
-class List:
+class SxmlNode:
+    line: int
     id: str
-    attrs: dict
+    attrs: dict[str, str]
     xs: list
 
 def ps_error(ps: ParserState, m: str, idx: int):
@@ -88,17 +92,20 @@ def _parse_attrs(ps: ParserState):
         k = _parse_unit(ps, ['(', ')'])
         _parse_ws(ps)
 
-        # check for empty attr
-        x = ps_peek(ps)
-        v = ''
-        if x != '@':
-            if x == '"':
-                v = _parse_str(ps)
-            else:
-                v = _parse_unit(ps, ['(', ')'])
-            _parse_ws(ps)
+        if k.startswith("x-"):
+            v = ''
         else:
-            pass
+            # check for empty attr
+            x = ps_peek(ps)
+            v = ''
+            if x != '@':
+                if x == '"':
+                    v = _parse_str(ps)
+                else:
+                    v = _parse_unit(ps, ['(', ')'])
+                _parse_ws(ps)
+            else:
+                pass
         xs[k] = v
 
     return xs
@@ -106,9 +113,8 @@ def _parse_attrs(ps: ParserState):
 def _parse_list(ps: ParserState):
     ps_next(ps)
 
-    y = List('', {}, [])
-
     start = ps.i
+    y = SxmlNode(start, '', {}, [])
     y.id = _parse_unit(ps, ['(', ')'])
     _parse_ws(ps)
 
@@ -131,6 +137,7 @@ def _parse_list(ps: ParserState):
             y.xs.append(_parse_unit(ps, ['(', ')']))
 
     if x != ')':
+        print(y)
         raise ps_error(ps, f"incomplete list: {y.id}", start)
     return y
 
@@ -156,17 +163,72 @@ def sxml_parse(xx: str):
     return _parse(ps)
 
 
-def sxml_ast_dump(x: List, indent: int):
+def sxml_traverse(x: SxmlNode, indent: int, y: Any, fn: Callable[[SxmlNode|str, int, Any, str], Any|None]):
+    yq = fn(x, indent, y, "B")
+    if not yq:
+        return
+
+    if type(x) == SxmlNode:
+        for xx in x.xs:
+            sxml_traverse(xx, indent + 1, yq, fn)
+    fn(x, indent, y, "E")
+
+def sxml_ast_dump(x: SxmlNode, indent: int = 0):
     prefix = "-" * indent if indent else ""
     print(f"{prefix}LIST_{x.id}")
-    for k,v in x.attrs:
-        print(f"{prefix}@{k}:{v}")
+    for k in x.attrs:
+        print(f"{prefix}@{k}:{x.attrs[k]}")
     for v in x.xs:
         if type(v) is str:
             print(f"{prefix}{v}")
         else:
             sxml_ast_dump(v, indent + 1)
 
-if __name__ == '__main__':
-    z = sxml_parse('(p @id 45 this is a sentence.)')
-    print(z)
+SxmlNodePair = tuple[SxmlNode|None, SxmlNode|None]
+def _filter_node(p: SxmlNode|None, x: SxmlNode, i: int, qs: list[str]) -> SxmlNodePair:
+    if qs[i] in x.id:
+        if i < len(qs)-1:
+            for y in x.xs:
+                if type(y) == str:
+                    continue
+                zp, zx = _filter_node(x, y, i + 1, qs)
+                if zx:
+                    return zp, zx
+        else:
+            return p, x
+    return p, None
+
+def filter_node(x: SxmlNode, q: str) -> SxmlNodePair:
+    q = q[1:]
+    p, y = _filter_node(None, x, 0, q.split("/"))
+    return p, y
+
+def sxml_remove_node(x: SxmlNode, q: str):
+    p, y = filter_node(x, q)
+    if not p or not y:
+        return
+    p.xs.remove(y)
+    return y
+
+def sxml_move_node_to_end(x: SxmlNode, q: str):
+    y = sxml_remove_node(x, q)
+    if not y:
+        return
+    x.xs.append(y)
+
+def sxml_replace_node(x: SxmlNode, q: str, z: SxmlNode):
+    p, y = filter_node(x, q)
+    if not p or not y:
+        return
+    i = p.xs.index(y)
+    p.xs[i] = z
+
+def sxml_get_str_node_val(x: SxmlNode, q: str):
+    _, y = filter_node(x, q)
+    if not y:
+        return
+    for a in y.xs:
+        if type(a) != str:
+            raise Error(f"Bad Node {q} [{type(a).__name__}]")
+
+    return " ".join(y.xs).strip()

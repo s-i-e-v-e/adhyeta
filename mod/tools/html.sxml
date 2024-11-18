@@ -1,0 +1,24 @@
+(html @lang "en"
+
+(head
+    (meta @charset "UTF-8")
+    (meta @name "viewport" @content "width=device-width, initial-scale=1")
+    (title adhyētā - A Sanskrit Reader{{title}})
+    (link @rel "stylesheet" @href "/a/main.css")
+)
+
+(body
+
+(header
+(p @x-tr ōṁ śrī gaṇapatayē namaḥ)
+(h1 (t @x-tr adhyētā) - A Sanskrit Reader)
+)
+
+(main {{main}})
+
+(footer
+(p (a @href "/copyright.sxml" Copyright))
+)
+
+)
+)

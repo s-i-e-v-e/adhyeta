@@ -1,55 +1,39 @@
-from typing import Callable
+from mod.util.sxml import SxmlNode
 
-from mod.util import sxml
-
-
-def sxml_to_html(x: sxml.List, fn: Callable[[sxml.List, str], str]):
-    return """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <title>sxml -> html</title>
-        <style>
-            * {
-                font-family: Shobhika;
-            }
-            h {
-                display: block;
-                font-weight: bold;
-            }
-        </style>
-    <head>
-    <body>
-    """+_build(x, 0, fn)+"""</body></html>"""
-
-def _build(x: sxml.List, indent: int, fn: Callable[[sxml.List, str], str]):
+def render_html_node(x: SxmlNode, tag: str):
     html = ''
-
-    c_tag = ''
-    if x.id in ["p", "h", "title", "document"]:
+    if x.id == "#":
+        # comment
+        return html
+    elif x.id in ["link", "meta", "img"]:
+        o_tag = f"<{x.id}"
+        c_tag = f"\n"
+        html += o_tag
+        if len(x.attrs):
+            for k in x.attrs:
+                html += f' {k}="{x.attrs.get(k)}"'
+        html += f">"
+    elif x.id == "\"":
+        o_tag = "\u201c"
+        c_tag = "\u201d"
+        html += o_tag
+    elif x.id == "'":
+        o_tag = "\u2018"
+        c_tag = "\u2019"
+        html += o_tag
+    elif x.id == "q":
+        o_tag = f"("
+        c_tag = f")"
+        html += o_tag
+    else :
         o_tag = f"<{x.id}"
         c_tag = f"</{x.id}>\n"
 
         html += o_tag
         if len(x.attrs):
-            for k, v in x.attrs:
-                html += f' {k}="{v}"'
+            for k in x.attrs:
+                if k.startswith("x-"):
+                    continue
+                html += f' {k}="{x.attrs.get(k)}"'
         html += f">"
-    elif x.id == "'":
-        o_tag = f"("
-        c_tag = f")"
-        html += o_tag
-    elif x.id == "#":
-        # comment
-        return ''
-
-    yy = ''
-    for v in x.xs:
-        if type(v) is str:
-            yy += fn(x, v)
-        else:
-            yy += _build(v, indent + 1, fn)
-
-    html += yy.strip()
-    html += c_tag
-    return html
+    return html if tag == "B" else c_tag
