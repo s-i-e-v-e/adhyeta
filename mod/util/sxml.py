@@ -15,7 +15,7 @@ class Token:
 @dataclass
 class List:
     id: str
-    attrs: list[tuple]
+    attrs: dict
     xs: list
 
 def ps_error(ps: ParserState, m: str, idx: int):
@@ -78,7 +78,7 @@ def _parse_str(ps: ParserState):
     return xs
 
 def _parse_attrs(ps: ParserState):
-    xs = []
+    xs = {}
     while not ps_eos(ps):
         x = ps_peek(ps)
         if x != '@':
@@ -92,18 +92,21 @@ def _parse_attrs(ps: ParserState):
         x = ps_peek(ps)
         v = ''
         if x != '@':
-            v = _parse_unit(ps, ['(', ')'])
+            if x == '"':
+                v = _parse_str(ps)
+            else:
+                v = _parse_unit(ps, ['(', ')'])
             _parse_ws(ps)
         else:
             pass
-        xs.append((k, v))
+        xs[k] = v
 
     return xs
 
 def _parse_list(ps: ParserState):
     ps_next(ps)
 
-    y = List('', [], [])
+    y = List('', {}, [])
 
     start = ps.i
     y.id = _parse_unit(ps, ['(', ')'])

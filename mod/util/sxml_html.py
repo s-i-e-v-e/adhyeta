@@ -3,7 +3,7 @@ from typing import Callable
 from mod.util import sxml
 
 
-def sxml_to_html(x: sxml.List, fn: Callable[[str], str]):
+def sxml_to_html(x: sxml.List, fn: Callable[[sxml.List, str], str]):
     return """
     <!DOCTYPE html>
     <html lang="en">
@@ -13,12 +13,16 @@ def sxml_to_html(x: sxml.List, fn: Callable[[str], str]):
             * {
                 font-family: Shobhika;
             }
+            h {
+                display: block;
+                font-weight: bold;
+            }
         </style>
     <head>
     <body>
     """+_build(x, 0, fn)+"""</body></html>"""
 
-def _build(x: sxml.List, indent: int, fn: Callable[[str], str]):
+def _build(x: sxml.List, indent: int, fn: Callable[[sxml.List, str], str]):
     html = ''
 
     c_tag = ''
@@ -42,7 +46,7 @@ def _build(x: sxml.List, indent: int, fn: Callable[[str], str]):
     yy = ''
     for v in x.xs:
         if type(v) is str:
-            yy += fn(v)
+            yy += fn(x, v)
         else:
             yy += _build(v, indent + 1, fn)
 

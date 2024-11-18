@@ -1,16 +1,26 @@
 from indic_transliteration import sanscript
 
+INVERTED_CANDRABINDU = '\u0900'
+CANDRABINDU = '\u0901'
+ANUSVARA = '\u0902'
+VISARGA = '\u0903'
+AVAGRAHA = 'ऽ'
+
+UDATTA='\u0951'
+ANUDATTA = '\u0952'
+GRAVE = '\u0953'
+ACUTE = '\u0954'
+
+def strip_svaras_devanagari(x: str):
+    return (x
+            .replace(INVERTED_CANDRABINDU, '')
+            .replace(CANDRABINDU, '')
+            .replace(UDATTA, '')
+            .replace(ANUDATTA, '')
+            .replace(AVAGRAHA, '')
+            )
+
 def _devanagari_fix(x: str):
-    INVERTED_CANDRABINDU = '\u0900'
-    CANDRABINDU = '\u0901'
-    ANUSVARA = '\u0902'
-    VISARGA = '\u0903'
-
-    UDATTA='\u0951'
-    ANUDATTA = '\u0952'
-    GRAVE = '\u0953'
-    ACUTE = '\u0954'
-
     x = x.replace('\u0331', '\u0952')
     x = x.replace('\u030D', '\u0951')
     x = x.replace('’', 'ऽ')
