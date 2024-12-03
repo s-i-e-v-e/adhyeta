@@ -109,7 +109,7 @@ def load_template():
 
 def load_document(f: str):
     q = WordCount(set(), False)
-    y = sxml.sxml_parse(read_text(f).replace("-\n", ""))
+    y = sxml.sxml_parse(read_text(f).replace("-\n", "").replace("--", "—"))
 
     if not y:
         raise Error("file is empty")
