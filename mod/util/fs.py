@@ -1,8 +1,10 @@
+from dataclasses import is_dataclass
 import shutil
 from pathlib import Path
 from os import listdir
 from os.path import isfile, isdir, join
 import json
+
 
 def list_files(path: str):
     xs = [f for f in listdir(path) if isfile(join(path, f))]

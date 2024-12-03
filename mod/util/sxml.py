@@ -210,6 +210,12 @@ def sxml_remove_node(x: SxmlNode, q: str):
     p.xs.remove(y)
     return y
 
+def sxml_move_node_to_start(x: SxmlNode, q: str):
+    y = sxml_remove_node(x, q)
+    if not y:
+        return
+    x.xs.insert(0, y)
+
 def sxml_move_node_to_end(x: SxmlNode, q: str):
     y = sxml_remove_node(x, q)
     if not y:
@@ -223,10 +229,10 @@ def sxml_replace_node(x: SxmlNode, q: str, z: SxmlNode):
     i = p.xs.index(y)
     p.xs[i] = z
 
-def sxml_get_str_node_val(x: SxmlNode, q: str):
+def sxml_get_str_node_val(x: SxmlNode, q: str) -> str:
     _, y = filter_node(x, q)
     if not y:
-        return
+        return ""
     for a in y.xs:
         if type(a) != str:
             raise Error(f"Bad Node {q} [{type(a).__name__}]")

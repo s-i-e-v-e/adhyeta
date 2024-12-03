@@ -38,7 +38,16 @@ def iso_to_devanagari(x: str):
     x = _devanagari_fix(x)
     return x
 
+def devanagari_to_iso(x: str):
+    x = sanscript.transliterate(x, sanscript.DEVANAGARI, sanscript.ISO)
+    return x
+
 def slp1_to_devanagari(x: str):
     x = sanscript.transliterate(x, sanscript.SLP1, sanscript.DEVANAGARI)
     x = _devanagari_fix(x)
     return x
+
+import unicodedata
+
+def normalize(x: str):
+    return unicodedata.normalize('NFC', x)
