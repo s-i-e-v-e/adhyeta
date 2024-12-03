@@ -14,7 +14,7 @@
 (h1 (t @x-tr adhyētā) - A Sanskrit Reader)
 )
 
-(main {{main}})
+(main {{nav}}{{main}})
 
 (footer
 (p (a @href "/copyright.sxml" Copyright))

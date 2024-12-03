@@ -89,6 +89,18 @@ def handle_meta_pragma(y: SxmlNode, x: SxmlNode|None):
     if x:
         sxml_replace_node(y, "/document/x-meta", x)
 
+BreadCrumbs = list[tuple[str, str]]
+def generate_breadcrumb(bc: BreadCrumbs):
+    if not len(bc):
+        return ""
+    html = "<nav>"
+    xs = []
+    for uri, label in bc:
+        xs.append(f"<a href='{uri}'>{label}</a>")
+    html += " » ".join(xs)
+    html += "</nav>"
+    return html
+
 def load_template():
     x = sxml.sxml_parse(SXML_TEMPLATE)
     xx = HtmlString([], False)
@@ -103,6 +115,7 @@ def load_document(f: str):
         raise Error("file is empty")
 
     title = sxml_get_str_node_val(y, "/document/title")
+    title = title if title else y.attrs["title"]
     #title = iso_to_devanagari(title) if title else ""
 
     handle_list_pragma(y, f)
@@ -116,27 +129,39 @@ def load_document(f: str):
 
     yy = HtmlString([], False)
     sxml_traverse(y, 0, yy, to_html) if y else ""
-    return [yy, title]
+    return [yy, title, y.attrs["uri"]]
 
-def translate_sxml(f: str):
+def translate_sxml(f: str, pp: str, bc: BreadCrumbs):
     xx = load_template()
-    yy, title = load_document(f)
+    yy, title, uri = load_document(f)
+
+    bcx = generate_breadcrumb(bc)
+
+    if f.endswith("/index.sxml"):
+        bc.append((pp, title))
+
     return ("<!DOCTYPE html>\n"+"".join(xx.html)
             .replace("{{main}}", "".join(yy.html))
+            .replace("{{nav}}", bcx)
             .replace("{{title}}", f" - {title}" if title else "")
             )
 
 
-def gen(d: str, od: str):
-    for f in list_dirs(d):
-        gen(f"{d}/{f}", f"{od}/{f}")
+def gen(d: str, od: str, pp: str, bc: BreadCrumbs):
+    pp = pp.replace("//", "/")
+    bc = bc.copy()
+    xs = list_files(d)
+    for f in xs:
+        if f == "index.sxml":
+            xs.remove(f)
+            xs.insert(0, f)
+            break
 
-
-    for f in list_files(d):
+    for f in xs:
         sf = f"{d}/{f}"
         df = f"{od}/{f}"
         if f.endswith(".sxml"):
-            y = translate_sxml(sf)
+            y = translate_sxml(sf, pp, bc)
             df = df.replace('.sxml', '.html')
             print(f"+ {df}")
             write_text(df, y)
@@ -144,5 +169,8 @@ def gen(d: str, od: str):
             print(f"> {df}")
             copy_file(sf, df)
 
+    for f in list_dirs(d):
+        gen(f"{d}/{f}", f"{od}/{f}", f"{pp}/{f}", bc)
+
 def run(dir_in: str, dir_out: str):
-    gen(dir_in, dir_out)
+    gen(dir_in, dir_out, "/", [])
