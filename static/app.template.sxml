@@ -1,0 +1,35 @@
+(html @lang "en"
+
+(head
+    (meta @charset "UTF-8")
+    (meta @name "viewport" @content "width=device-width, initial-scale=1")
+    (title अध्येता - A Sanskrit Reader)
+    (link @rel "stylesheet" @href "/a/main.css")
+    (link @rel "icon" @href "/a/favicon-192.png" @type "image/png" @sizes "192x192")
+    (link @rel "manifest" @href "/a/app.webmanifest.json")
+    (script @src "/a/htmx.min.js")
+    (script @type module @src "/a/app.js")
+)
+
+(body @class "app"
+(span @id "session" @is-session "0")
+(header
+(p @class prayer ॥ ॐ श्री गणपतये नमः ॥)
+(div @class wrapper
+(div @class logo (a @href "/" (span अध्येता)(span a sanskrit reader)))
+(span @class nav @id scheme)
+(span @class nav @id theme)
+(span @class nav @id font)
+(span @class nav @id account)
+)
+)
+
+(main (div @id "co" (div @id "ephemeral"){{main}}))
+
+
+(footer
+(p "")
+)
+
+)
+)
