@@ -1,0 +1,22 @@
+adhyeta.org.in {
+    redir https://www.{host}{uri}
+}
+
+www.adhyeta.org.in {
+    encode zstd gzip
+    root * /adhyeta/www
+    file_server {
+        etag_file_extensions .sha256
+    }
+}
+
+app.adhyeta.org.in {
+    encode zstd gzip
+    root * /adhyeta/www
+    route {
+        file_server /a/* {
+            etag_file_extensions .sha256
+        }
+        reverse_proxy localhost:8000
+    }
+}
