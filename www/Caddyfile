@@ -1,0 +1,39 @@
+adhyeta.org.in {
+    redir https://www.{host}{uri}
+}
+
+www.adhyeta.org.in {
+    encode zstd gzip
+    root * /adhyeta/www
+    file_server {
+        etag_file_extensions .b3
+    }
+
+    log {
+        output file /var/log/caddy/adhyeta-www-access.log {
+            roll_size 10mb
+            roll_keep 20
+            roll_keep_for 720h
+        }
+    }
+}
+
+app.adhyeta.org.in {
+    encode zstd gzip
+    root * /adhyeta/www
+    route {
+        file_server /favicon.ico
+        file_server /robots.txt
+        file_server /a/* {
+            etag_file_extensions .b3
+        }
+        reverse_proxy localhost:8000
+    }
+    log {
+        output file /var/log/caddy/adhyeta-app-access.log {
+            roll_size 10mb
+            roll_keep 20
+            roll_keep_for 720h
+        }
+    }
+}

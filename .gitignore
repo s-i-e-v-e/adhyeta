@@ -1,0 +1,6 @@
+.venv/
+.idea/
+*.lock
+__pycache__
+.ignore/
+*.env
