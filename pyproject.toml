@@ -1,0 +1,33 @@
+[project]
+name = "adhyeta"
+version = "0.1.0"
+description = "अध्येता is an application designed to improve language acquisition skills through the process of reading."
+readme = "README.md"
+requires-python = ">=3.13.1"
+dependencies = [
+    "uvicorn",
+    "starlette",
+    "apsw",
+    "python-multipart",
+    "scrypt",
+    "argon2-cffi",
+    "pytest",
+    "indic_transliteration",
+    "ruff>=0.8.3",
+    "pyright>=1.1.390",
+    "itsdangerous>=2.2.0",
+    "asgi-csrf>=0.11",
+    "uuid7>=0.1.0",
+    "blake3>=1.0.0",
+    "lxml>=5.3.0",
+    "transformers>=4.47.1",
+    "tiktoken>=0.8.0",
+    "openai>=1.59.6",
+    "beautifulsoup4>=4.12.3",
+]
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib", "-s"]
+
+[tool.pyright]
+ignore = ["mod/tests"]
