@@ -1,0 +1,31 @@
+(html @lang "en"
+
+(head
+    (meta @charset "UTF-8")
+    (meta @name "viewport" @content "width=device-width, initial-scale=1")
+    (title अध्येता - A Sanskrit Reader{{title}})
+    (link @rel "stylesheet" @href "/a/main.css")
+    (link @rel "icon" @href "/a/favicon-192.png" @type "image/png" @sizes "192x192")
+    (script @src "/a/main.js")
+)
+
+(body
+
+(header
+(p @class prayer ॥ ॐ श्री गणपतये नमः ॥)
+(div @class wrapper
+(div @class logo (a @href "/" (span अध्येता)(span a sanskrit reader)))
+(span @class nav (a @href "javascript:void(0)" (svg @focusable "false" @class "icon" @xmlns "http://www.w3.org/2000/svg" (path @d ""))))
+(span @class nav (a @href "https://app.adhyeta.org.in" login))
+)
+)
+
+(main {{nav}}{{main}})
+
+
+(footer
+(p (a @href "/copyright.sxml" Copyright))
+)
+
+)
+)

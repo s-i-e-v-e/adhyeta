@@ -1,0 +1,32 @@
+from dataclasses import dataclass
+from mod.lib.fs import read_text
+
+@dataclass
+class Env:
+    RAW_ROOT: str # raw GRETIL/DCS/ETC texts
+    SXML_TEXTS_ROOT: str # sxml texts
+    SXML_WWW_ROOT: str  # sxml www
+
+    DATA_ROOT: str  # database
+    WWW_ROOT: str # root: www.adhyeta.org.in
+    APP_ROOT: str # root: app.adhyeta.org.in
+
+    IS_PRODUCTION: bool
+
+    SESSION_SECRET_KEY: str
+    CSRF_SECRET_KEY: str
+    ROOT_USER: str
+
+env = Env("/tmp/.abc", "/tmp/.abc", "/tmp/.abc", "/tmp/.abc", "/tmp/.abc", "/tmp/.abc", False, "", "", "")
+
+for x in read_text("./.env").split("\n"):
+    if not x.strip():
+        continue
+    y = x.split("=")
+
+    a = y[0]
+    b = (True if y[1] == "True" else False) if y[0].startswith("IS_") else y[1]
+    env.__setattr__(a, b)
+
+if not env.SESSION_SECRET_KEY or not env.CSRF_SECRET_KEY:
+    raise ValueError("No SECRET_KEY set")

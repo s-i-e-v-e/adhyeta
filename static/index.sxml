@@ -1,0 +1,5 @@
+(document @loc "/" @title Dashboard
+
+(p Namaste, {{USER}}.)
+(p Read (a @href "/sa/k/l" stories))
+)

@@ -1,0 +1,13 @@
+(document @id login @loc "/" @title "Log In"
+(div @class "{{ERROR_MESSAGE_CLASS}}"
+(h2 Log In)
+(form @method POST @action "/login"
+(input @type hidden @name next @value "{{NEXT}}")
+(input @type hidden @name csrftoken @value "{{CSRF_TOKEN}}")
+(p (input @type text @autocomplete @name username @placeholder "Username/Email"))
+(p (input @type password @name password @placeholder "Password"))
+(p @class "message" (span Invalid Username/Email/Password))
+(p (button @type submit @name login "Log In"))
+))
+
+)
