@@ -1,12 +1,10 @@
-import math
-import pprint
-
 from mod.lib import fs, sxml, text
 from mod.lib.sxml import SxmlNode
 from mod.root.backend.importers.tp import __gut_raw_base, __se_raw_base
+from mod.root.backend.importers.tp import ai_translate
+ds_translate = ai_translate.deepseek
 
 def __translate_bit(xml_text: str) -> sxml.SxmlNode:
-    from mod.root.backend.importers.tp.deepseek import translate as ds_translate
     n = sxml.from_xml(xml_text)
     xml_text = ds_translate(sxml.to_xml(n))
     try:
@@ -71,14 +69,13 @@ def __get_original_meta(doc: sxml.SxmlNode):
 
 TOK_MAX = 3_000
 def __translate_xml_file(fp: str):
-    from mod.root.backend.importers.tp.deepseek import get_token_count
     df = fp.replace('.xml', '.sa.xml')
     if fs.exists(df):
         return
     print(f"translating {fp}")
     xml_text = fs.read_text(fp)
     doc = sxml.from_xml(xml_text)
-    tokens = get_token_count(xml_text)
+    tokens = ai_translate.get_token_count(xml_text)
     original_title, original_author = __get_original_meta(doc)
     __log_meta(doc.node(0), tokens)
     if tokens < TOK_MAX:
@@ -90,7 +87,7 @@ def __translate_xml_file(fp: str):
     c = doc.first("chapter")
     assert c
     xml_text = sxml.to_xml(c)
-    tokens = get_token_count(xml_text)
+    tokens = ai_translate.get_token_count(xml_text)
     __log_meta(c, tokens)
 
     if tokens < TOK_MAX:
@@ -108,10 +105,10 @@ def __translate_xml_file(fp: str):
                 continue
 
             xml_text = sxml.to_xml(p)
-            tokens = get_token_count(xml_text)
+            tokens = ai_translate.get_token_count(xml_text)
             __log_meta(p, tokens)
             y_tokens += tokens
-            if y_tokens < max(TOK_MAX / 2, 2_000):
+            if y_tokens < TOK_MAX:
                 ys.append(p)
                 continue
 
@@ -175,89 +172,3 @@ def translate_gut(id: str):
     else:
         for x in fs.list_dirs(__gut_raw_base()):
             __translate_dir(x.full_path)
-
-MAX_TOKENS = 1_024 * 8
-def __translate_adhoc_file(fp: str):
-    df = fp.replace('.xml', '.sa.xml')
-    pf = df.replace('.xml', '.xml.part')
-
-    from mod.root.backend.importers.tp.deepseek import translate as ds_translate
-    xml_text = fs.read_text(fp)
-    if '<copyright>' in xml_text:
-        piece = text.between_inclusive(xml_text, '<copyright>', '</source>')
-        xml_text = text.between_inclusive_replace(xml_text, '<copyright>', '</source>', '<meta-info/>')
-
-    out_text = ''
-    n = len(xml_text)
-    nt = math.ceil(n/4)
-    if n < MAX_TOKENS:
-        print(f'FULLY TRANSLATING {fp} [{nt} toks]')
-        out_text = ds_translate(xml_text)
-    else:
-        print(f'BATCH-TRANSLATING {fp} [{nt} toks]')
-        xs = xml_text.split('<p>')
-        ys = ['<p>'+x for x in xs[1:]]
-        ys.insert(0, xs[0])
-
-        xx = ''
-        xnnt = 0
-        for y in ys:
-            if len(xx) + len(y) < MAX_TOKENS:
-                xx += y
-            else:
-                nn = len(xx)
-                nnt = math.ceil(nn/4)
-                print(f'==========[{xnnt} + {nnt}/{nt} toks]')
-                xnnt += nnt
-                out_text += ds_translate(xx)
-                fs.write_text(pf, out_text)
-                xx = y
-        if xx:
-            nn = len(xx)
-            nnt = math.ceil(nn / 4)
-            print(f'==========[{xnnt} + {nnt}/{nt} toks]')
-            out_text += ds_translate(xx)
-
-    if '<meta-info/>' in out_text:
-        out_text = out_text.replace('<meta-info/>', piece)
-    out_text = out_text.replace('</meta>\n<chapter>', '<note>कृत्रिमबुद्ध्या कृतं भाषान्तरं इदं</note>\n</meta>\n<chapter>')
-    fs.write_text(df, out_text)
-    fs.rm(pf)
-
-
-def __translation_in_progress(x: str) -> bool:
-    return fs.exists(x.replace('.xml', '.sa.xml')) or fs.exists(x.replace('.xml', '.sa.xml.part'))
-
-def __collect_files_for_translation(fp: str, xs: list[str]):
-    for f in fs.list_dirs(fp):
-        __collect_files_for_translation(f.full_path, xs)
-
-    for f in fs.list_files(fp):
-        if not f.name.endswith(".xml"):
-            continue
-        if f.name.endswith(".sa.xml"):
-            continue
-        if f.name.endswith(".part"):
-            continue
-        if __translation_in_progress(f.full_path):
-            continue
-        if f.name == 'index.xml':
-            continue
-        xs.append(f.full_path)
-
-def translate_file(path: str, split_index: int):
-    MIN_FILES = 7
-    xs = []
-    __collect_files_for_translation(fs.abs(path), xs)
-    if split_index:
-        ys = text.list_chunks(xs, max(math.ceil(len(xs)/5), MIN_FILES))
-        print(f'possible indices: 1-{len(ys)}')
-        xs = ys[split_index-1]
-    print(f'Translating {len(xs)} files:')
-    for x in xs:
-        print('--'+x.split('/')[-1])
-    for x in xs:
-        if __translation_in_progress(x):
-            print(f'Skipping {x}')
-            continue
-        __translate_adhoc_file(x)

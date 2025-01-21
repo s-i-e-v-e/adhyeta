@@ -66,6 +66,22 @@ def xml_prettify(path: str):
         a = sxml.xml_prettify(a)
         fs.write_text(f.full_path, a)
 
+def xml_clean(path: str):
+    # check if we are in write directory
+    xs = fs.list_files(path)
+    if not [f for f in xs if f.name == 'ids']:
+        raise Exception('no ids')
+    if not [f for f in xs if f.name == 'index.xml']:
+        raise Exception('no index.xml')
+
+    for f in xs:
+        if not f.name.endswith('.xml'):
+            continue
+        if f.name.endswith('.sa.xml'):
+            continue
+        print(f'deleting: {f.name}')
+        fs.rm(f.full_path)
+
 if __name__ == '__main__':
     if sys.argv[1] == "ocr":
         dir_in = sys.argv[2]
@@ -84,21 +100,25 @@ if __name__ == '__main__':
         print(repo.repo.head("SELECT * FROM users WHERE user = ?", un))
     elif sys.argv[1] == "import":
         from mod.config import env
-        from mod.root.backend.importers.tp import gut_download, se_download, ramayana
+        from mod.root.backend.importers.tp import gut_download, se_import, ramayana
         file = sys.argv[2] if len(sys.argv) > 2 else 'work.list'
         debug = False
-        se_download.process(file, debug)
+        se_import.process(file)
         if not debug: gut_download.process(file)
         ramayana.generate(env.RAW_ROOT, env.SXML_ROOT)
     elif sys.argv[1] == "translate":
-        from mod.root.backend.importers.tp import translator
+        from mod.root.backend.importers.tp import translator, translator_adhoc_xml
         backend = sys.argv[2]
         if backend == "se":
-            translator.translate_se(sys.argv[3])
+            pass
+            #translator.translate_se(sys.argv[3])
         elif backend == "gut":
-            translator.translate_gut(sys.argv[3])
+            pass
+            #translator.translate_gut(sys.argv[3])
         elif backend == "file":
-            translator.translate_file(sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 0)
+            translator_adhoc_xml.translate_file(sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 0)
+        elif backend == "bug":
+            translator_adhoc_xml.handle_buggy_translation(sys.argv[3])
         else:
             print("unknown backend")
     elif sys.argv[1] == "generate":
@@ -114,6 +134,8 @@ if __name__ == '__main__':
                 xml_prettify(path)
             case "unique":
                 xml_list_unique_elements(path)
+            case "del-gen":
+                xml_clean(path)
             case _: raise Exception()
     elif sys.argv[1] == "trans-check":
         from mod.root.backend.importers.tp import doc_defective_translation

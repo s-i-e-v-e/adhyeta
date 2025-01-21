@@ -16,8 +16,10 @@ class Env:
     CSRF_SECRET_KEY: str
     ROOT_USER: str
     DEEPSEEK_API_KEY: str
+    HYPERBOLIC_API_KEY: str
+    GOOGLE_AI_API_KEY: str
 
-env = Env("/tmp/.abc", "/tmp/.abc", "/tmp/.abc", "/tmp/.abc", "/tmp/.abc", False, "", "", "", "")
+env = Env("/tmp/.abc", "/tmp/.abc", "/tmp/.abc", "/tmp/.abc", "/tmp/.abc", False, "", "", "", "", "", "")
 
 import pathlib
 env_file = (pathlib.Path(__file__).parent.parent / ".env").__str__()

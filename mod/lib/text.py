@@ -43,6 +43,7 @@ def make_slug(title: str) -> str:
     x = x.strip('-')
     assert x
     x = x if len(x) < 80 else x[:80]
+    assert not x.endswith('8')
     return x
 
 delimiters = ["(", ")", "?", "!", ".", ",", ";", ":", "।", "॥", "—", "-", "/", "\u201C", "\u201D", "\u2018", "\u2019", "\t", "\n", "'", "\""]
@@ -133,6 +134,9 @@ def list_chunks(xs: list, size: int):
     return ys
 
 
+def roman_to_int_str(s: str) -> str:
+    return s
+
 def roman_to_int(s: str) -> int:
     # Mapping of Roman numerals to their integer values
     roman_to_int_map = {
@@ -170,7 +174,8 @@ def is_roman(s: str) -> bool:
 
 def between_inclusive(x: str, a: str, b: str) -> str:
     start = x.find(a)
-    end = x.find(b)
+    end = x.find(b, start)
+    print(start, end)
     if start >= 0 and end >= 0:
         return x[start:end+len(b)]
     raise Exception()
