@@ -5,18 +5,6 @@ from typing import Any
 from indic_transliteration import sanscript
 import html
 
-def xml_attr_escape(x: str) -> str:
-    return html.escape(x, True)
-
-def xml_el_escape(x: str) -> str:
-    return html.escape(x, False)
-
-def sxml_attr_escape(x: str) -> str:
-    return x.replace('"', '\\"')
-
-def sxml_el_escape(x: str) -> str:
-    return x.replace('\\', '\\\\').replace('(', '\\(').replace(')', '\\)')
-
 def normalize(x: str):
     x = unicodedata.normalize('NFD', x)
     # remove nukhta
