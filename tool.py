@@ -82,6 +82,13 @@ def xml_clean(path: str):
         print(f'deleting: {f.name}')
         fs.rm(f.full_path)
 
+def works_import(file: str):
+    from mod.config import env
+    from mod.root.backend.importers.tp import gut_download, se_import, ramayana
+    se_import.process(file)
+    #gut_download.process(file)
+    #ramayana.generate(env.RAW_ROOT, env.SXML_ROOT)
+
 if __name__ == '__main__':
     if sys.argv[1] == "ocr":
         dir_in = sys.argv[2]
@@ -99,13 +106,8 @@ if __name__ == '__main__':
         print(f"{un}-{pw}")
         print(repo.repo.head("SELECT * FROM users WHERE user = ?", un))
     elif sys.argv[1] == "import":
-        from mod.config import env
-        from mod.root.backend.importers.tp import gut_download, se_import, ramayana
         file = sys.argv[2] if len(sys.argv) > 2 else 'work.list'
-        debug = False
-        se_import.process(file)
-        if not debug: gut_download.process(file)
-        ramayana.generate(env.RAW_ROOT, env.SXML_ROOT)
+        works_import(file)
     elif sys.argv[1] == "translate":
         from mod.root.backend.importers.tp import translator, translator_adhoc_xml
         backend = sys.argv[2]

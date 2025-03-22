@@ -254,7 +254,7 @@ def __parse_chapter(n: mxml.XmlNode, footnotes: FootNotes):
                 return None
 
     # rewrite nodes
-    # todo: is temporary. maybe kep the original html nodes
+    # todo: is temporary. maybe keep the original html nodes
     def rewrite(n: mxml.XmlNode):
         if 'type' in n.attrs:
             xs = n.attrs['type'].split(' ')
@@ -410,27 +410,3 @@ def __process_work(xs: list[str]):
 def process(file: str):
     xs = __get_works_list('standard-ebooks', file)
     __process_work(xs)
-
-'''
-george-eliot_daniel-deronda
-'''
-if __name__ == '__main__':
-    works = '''
-anna-sewell_black-beauty
-edgar-allan-poe_short-fiction
-franklin-w-dixon_hunting-for-hidden-gold
-franklin-w-dixon_the-house-on-the-cliff
-franklin-w-dixon_the-missing-chums
-franklin-w-dixon_the-secret-of-the-old-mill
-franklin-w-dixon_the-shore-road-mystery
-franklin-w-dixon_the-tower-treasure
-george-eliot_middlemarch
-george-eliot_silas-marner
-george-eliot_the-mill-on-the-floss
-oscar-wilde_childrens-stories
-'''.strip().split('\n')
-
-    works = '''
-edgar-allan-poe_short-fiction
-'''.strip().split('\n')
-    __process_work(works)
