@@ -1,2 +1,0 @@
-#!/bin/sh
-uv run uvicorn app:asgi_app
