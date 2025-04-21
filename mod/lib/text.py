@@ -1,20 +1,11 @@
-import unicodedata
-import re
+
+
 from typing import Any
 
-from indic_transliteration import sanscript
+
 import html
 
-def normalize(x: str):
-    x = unicodedata.normalize('NFD', x)
-    # remove nukhta
-    x = x.replace('़', '')
-    return x
 
-def devanagari_to_iso(x: str):
-    x = sanscript.transliterate(x, sanscript.DEVANAGARI, sanscript.ISO)
-    x = normalize(x)
-    return x
 
 def make_slug(title: str) -> str:
     import re
@@ -34,12 +25,7 @@ def make_slug(title: str) -> str:
     assert not x.endswith('8')
     return x
 
-delimiters = ["(", ")", "?", "!", ".", ",", ";", ":", "।", "॥", "—", "-", "/", "\u201C", "\u201D", "\u2018", "\u2019", "\t", "\n", "'", "\""]
-def strip_punctuation(x: str):
-    x = x.translate({ord(a): ' ' for a in delimiters})
-    x = re.sub(r'\s+', ' ', x)
-    x = x.strip()
-    return x.split(" ")
+
 
 devanagari = []
 devanagari.extend(list(range(0x0902, 0x0903 + 1)))
@@ -107,19 +93,8 @@ def to_sa_words(x: str) -> list[tuple[bool, str]]:
 
     return ys
 
-def from_json(x: str) -> dict[str, str]:
-    import json
-    return json.loads(x)
 
-def to_json(x: Any) -> str:
-    import json
-    return json.dumps(x)
 
-def list_chunks(xs: list, size: int):
-    ys = []
-    for i in range(0, len(xs), size):
-        ys.append(xs[i:i + size])
-    return ys
 
 
 def roman_to_int_str(s: str) -> str:
@@ -160,17 +135,3 @@ def is_roman(s: str) -> bool:
             return False
     return True
 
-def between_inclusive(x: str, a: str, b: str) -> str:
-    start = x.find(a)
-    end = x.find(b, start)
-    print(start, end)
-    if start >= 0 and end >= 0:
-        return x[start:end+len(b)]
-    raise Exception()
-
-def between_inclusive_replace(x: str, a: str, b: str, y: str) -> str:
-    start = x.find(a)
-    end = x.find(b)
-    if start >= 0 and end >= 0:
-        return x[0:start]+y+x[end+len(b):]
-    raise Exception()
